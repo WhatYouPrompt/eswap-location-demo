@@ -4,13 +4,10 @@ import { useEffect, useRef, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// 修复 Leaflet 默认图标问题
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-
+// 修复 Leaflet 默认图标问题 - 使用CDN地址避免TypeScript类型问题
 const DefaultIcon = L.icon({
-  iconUrl: icon.src || icon,
-  shadowUrl: iconShadow.src || iconShadow,
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 })
