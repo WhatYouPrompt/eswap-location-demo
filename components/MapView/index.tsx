@@ -229,7 +229,7 @@ export default function MapView({ onMapClick, heatmapData, existingCabinets }: M
         style={{
           position: 'absolute',
           top: 12,
-          left: 12,
+          right: 12,
           zIndex: 1000,
           background: 'rgba(255,255,255,0.95)',
           padding: '8px 12px',
