@@ -1,0 +1,184 @@
+{
+  "cabinets": [
+    {
+      "id": "CBT-001",
+      "name": "Gulberg Main",
+      "lat": 31.5204,
+      "lng": 74.3587,
+      "status": "active",
+      "dailyOrders": 45,
+      "utilization": 0.85
+    },
+    {
+      "id": "CBT-002",
+      "name": "Johar Town Block A",
+      "lat": 31.4697,
+      "lng": 74.2728,
+      "status": "active",
+      "dailyOrders": 38,
+      "utilization": 0.72
+    },
+    {
+      "id": "CBT-003",
+      "name": "Model Town",
+      "lat": 31.4819,
+      "lng": 74.3236,
+      "status": "active",
+      "dailyOrders": 52,
+      "utilization": 0.90
+    },
+    {
+      "id": "CBT-004",
+      "name": "DHA Phase 5",
+      "lat": 31.4515,
+      "lng": 74.4032,
+      "status": "active",
+      "dailyOrders": 41,
+      "utilization": 0.78
+    },
+    {
+      "id": "CBT-005",
+      "name": "Liberty Market",
+      "lat": 31.5291,
+      "lng": 74.3502,
+      "status": "active",
+      "dailyOrders": 55,
+      "utilization": 0.92
+    },
+    {
+      "id": "CBT-006",
+      "name": "Anarkali Bazaar",
+      "lat": 31.5685,
+      "lng": 74.3238,
+      "status": "active",
+      "dailyOrders": 48,
+      "utilization": 0.88
+    },
+    {
+      "id": "CBT-007",
+      "name": "Mall Road",
+      "lat": 31.5532,
+      "lng": 74.3415,
+      "status": "active",
+      "dailyOrders": 35,
+      "utilization": 0.65
+    },
+    {
+      "id": "CBT-008",
+      "name": "Ferozepur Road",
+      "lat": 31.4921,
+      "lng": 74.3158,
+      "status": "active",
+      "dailyOrders": 42,
+      "utilization": 0.75
+    },
+    {
+      "id": "CBT-009",
+      "name": "Canal Road",
+      "lat": 31.5123,
+      "lng": 74.2987,
+      "status": "active",
+      "dailyOrders": 29,
+      "utilization": 0.58
+    },
+    {
+      "id": "CBT-010",
+      "name": "Wapda Town",
+      "lat": 31.4456,
+      "lng": 74.2891,
+      "status": "active",
+      "dailyOrders": 33,
+      "utilization": 0.62
+    },
+    {
+      "id": "CBT-011",
+      "name": "Bahria Town",
+      "lat": 31.4012,
+      "lng": 74.2156,
+      "status": "active",
+      "dailyOrders": 28,
+      "utilization": 0.55
+    },
+    {
+      "id": "CBT-012",
+      "name": "Thokar Niaz Baig",
+      "lat": 31.4789,
+      "lng": 74.2254,
+      "status": "active",
+      "dailyOrders": 37,
+      "utilization": 0.70
+    },
+    {
+      "id": "CBT-013",
+      "name": "Railway Station",
+      "lat": 31.5812,
+      "lng": 74.3365,
+      "status": "active",
+      "dailyOrders": 44,
+      "utilization": 0.82
+    },
+    {
+      "id": "CBT-014",
+      "name": "Allama Iqbal Town",
+      "lat": 31.5045,
+      "lng": 74.3012,
+      "status": "active",
+      "dailyOrders": 39,
+      "utilization": 0.73
+    },
+    {
+      "id": "CBT-015",
+      "name": "Samanabad",
+      "lat": 31.5234,
+      "lng": 74.2876,
+      "status": "active",
+      "dailyOrders": 36,
+      "utilization": 0.68
+    },
+    {
+      "id": "CBT-016",
+      "name": "Garden Town",
+      "lat": 31.5128,
+      "lng": 74.3289,
+      "status": "active",
+      "dailyOrders": 47,
+      "utilization": 0.86
+    },
+    {
+      "id": "CBT-017",
+      "name": "Muslim Town",
+      "lat": 31.4987,
+      "lng": 74.3145,
+      "status": "active",
+      "dailyOrders": 31,
+      "utilization": 0.60
+    },
+    {
+      "id": "CBT-018",
+      "name": "Ichhra",
+      "lat": 31.5356,
+      "lng": 74.3089,
+      "status": "active",
+      "dailyOrders": 40,
+      "utilization": 0.76
+    },
+    {
+      "id": "CBT-019",
+      "name": "Gowalmandi",
+      "lat": 31.5623,
+      "lng": 74.3156,
+      "status": "active",
+      "dailyOrders": 43,
+      "utilization": 0.80
+    },
+    {
+      "id": "CBT-020",
+      "name": "Defence Housing Authority",
+      "lat": 31.4389,
+      "lng": 74.3876,
+      "status": "active",
+      "dailyOrders": 34,
+      "utilization": 0.64
+    }
+  ]
+}
