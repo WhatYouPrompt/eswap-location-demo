@@ -64,10 +64,52 @@ export default function MapView({ onMapClick, heatmapData, existingCabinets }: M
       zoomControl: true,
     })
 
-    // 添加 OpenStreetMap 底图
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map)
+    // 添加地图底图 - 多瓦片源备选方案
+    // 优先使用高德地图（国内外均可访问），失败后尝试其他源
+    const tileLayers = [
+      {
+        url: 'https://webrd0{s}.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        subdomains: ['1', '2', '3', '4'],
+        attribution: '© AutoNavi'
+      },
+      {
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        subdomains: [],
+        attribution: '© OpenStreetMap'
+      },
+      {
+        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        subdomains: ['a', 'b', 'c'],
+        attribution: '© CartoDB'
+      }
+    ]
+
+    // 尝试加载瓦片，失败则切换下一个源
+    let currentLayerIndex = 0
+    let currentTileLayer: L.TileLayer | null = null
+
+    const loadTileLayer = (index: number) => {
+      if (index >= tileLayers.length) return
+
+      const layer = tileLayers[index]
+      currentTileLayer = L.tileLayer(layer.url, {
+        subdomains: layer.subdomains as string[],
+        attribution: layer.attribution,
+        errorTileUrl: '' // 加载失败时不显示错误图片
+      })
+
+      currentTileLayer.on('tileerror', () => {
+        console.warn(`Tile layer ${index} failed, trying next...`)
+        if (currentTileLayer) {
+          map.removeLayer(currentTileLayer)
+        }
+        loadTileLayer(index + 1)
+      })
+
+      currentTileLayer.addTo(map)
+    }
+
+    loadTileLayer(currentLayerIndex)
 
     mapRef.current = map
 
