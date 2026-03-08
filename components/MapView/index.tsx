@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { Select, Space, Button, Tooltip } from 'antd'
+import { ReloadOutlined } from '@ant-design/icons'
 
-// 修复 Leaflet 默认图标问题 - 使用CDN地址避免TypeScript类型问题
+// 修复 Leaflet 默认图标问题
 const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -35,6 +37,31 @@ const cabinetIcon = L.divIcon({
   iconAnchor: [12, 12],
 })
 
+// 瓦片源配置
+const TILE_SOURCES = {
+  geoq: {
+    name: 'GeoQ (国内推荐)',
+    url: 'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}',
+    attribution: '© GeoQ'
+  },
+  osm: {
+    name: 'OpenStreetMap',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '© OpenStreetMap'
+  },
+  carto: {
+    name: 'CartoDB',
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    subdomains: ['a', 'b', 'c'],
+    attribution: '© CartoDB'
+  },
+  arcgis: {
+    name: 'ArcGIS卫星',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '© ArcGIS'
+  }
+}
+
 interface MapViewProps {
   onMapClick: (lat: number, lng: number) => void
   heatmapData: Array<{ lat: number; lng: number; intensity: number }>
@@ -53,6 +80,8 @@ export default function MapView({ onMapClick, heatmapData, existingCabinets }: M
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const heatmapLayerRef = useRef<L.Layer | null>(null)
   const markersLayerRef = useRef<L.LayerGroup | null>(null)
+  const tileLayerRef = useRef<L.TileLayer | null>(null)
+  const [currentTile, setCurrentTile] = useState<keyof typeof TILE_SOURCES>('geoq')
 
   // 初始化地图
   useEffect(() => {
@@ -64,53 +93,6 @@ export default function MapView({ onMapClick, heatmapData, existingCabinets }: M
       zoomControl: true,
     })
 
-    // 添加地图底图 - 多瓦片源备选方案
-    // 优先使用高德地图（国内外均可访问），失败后尝试其他源
-    const tileLayers = [
-      {
-        url: 'https://webrd0{s}.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-        subdomains: ['1', '2', '3', '4'],
-        attribution: '© AutoNavi'
-      },
-      {
-        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        subdomains: [],
-        attribution: '© OpenStreetMap'
-      },
-      {
-        url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-        subdomains: ['a', 'b', 'c'],
-        attribution: '© CartoDB'
-      }
-    ]
-
-    // 尝试加载瓦片，失败则切换下一个源
-    let currentLayerIndex = 0
-    let currentTileLayer: L.TileLayer | null = null
-
-    const loadTileLayer = (index: number) => {
-      if (index >= tileLayers.length) return
-
-      const layer = tileLayers[index]
-      currentTileLayer = L.tileLayer(layer.url, {
-        subdomains: layer.subdomains as string[],
-        attribution: layer.attribution,
-        errorTileUrl: '' // 加载失败时不显示错误图片
-      })
-
-      currentTileLayer.on('tileerror', () => {
-        console.warn(`Tile layer ${index} failed, trying next...`)
-        if (currentTileLayer) {
-          map.removeLayer(currentTileLayer)
-        }
-        loadTileLayer(index + 1)
-      })
-
-      currentTileLayer.addTo(map)
-    }
-
-    loadTileLayer(currentLayerIndex)
-
     mapRef.current = map
 
     // 初始化图层组
@@ -121,6 +103,26 @@ export default function MapView({ onMapClick, heatmapData, existingCabinets }: M
       mapRef.current = null
     }
   }, [])
+
+  // 切换瓦片源
+  useEffect(() => {
+    if (!mapRef.current) return
+
+    // 移除旧的瓦片层
+    if (tileLayerRef.current) {
+      mapRef.current.removeLayer(tileLayerRef.current)
+    }
+
+    // 添加新的瓦片层
+    const source = TILE_SOURCES[currentTile]
+    tileLayerRef.current = L.tileLayer(source.url, {
+      subdomains: (source as any).subdomains || [],
+      attribution: source.attribution,
+      maxZoom: 18,
+    })
+
+    tileLayerRef.current.addTo(mapRef.current)
+  }, [currentTile])
 
   // 添加热力图层
   useEffect(() => {
@@ -201,17 +203,58 @@ export default function MapView({ onMapClick, heatmapData, existingCabinets }: M
     }
   }, [handleMapClick])
 
+  // 刷新瓦片
+  const handleRefresh = () => {
+    if (tileLayerRef.current) {
+      tileLayerRef.current.redraw()
+    }
+  }
+
   return (
-    <div
-      ref={mapContainerRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        top: 0,
-        left: 0
-      }}
-    />
+    <>
+      {/* 地图容器 */}
+      <div
+        ref={mapContainerRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0
+        }}
+      />
+
+      {/* 地图控制面板 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 12,
+          left: 12,
+          zIndex: 1000,
+          background: 'rgba(255,255,255,0.95)',
+          padding: '8px 12px',
+          borderRadius: 6,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+        }}
+      >
+        <Space>
+          <span style={{ fontSize: 13, color: '#666' }}>地图源:</span>
+          <Select
+            value={currentTile}
+            onChange={setCurrentTile}
+            style={{ width: 140 }}
+            size="small"
+            options={Object.entries(TILE_SOURCES).map(([key, val]) => ({
+              value: key,
+              label: val.name
+            }))}
+          />
+          <Tooltip title="刷新地图">
+            <Button size="small" icon={<ReloadOutlined />} onClick={handleRefresh} />
+          </Tooltip>
+        </Space>
+      </div>
+    </>
   )
 }
 
